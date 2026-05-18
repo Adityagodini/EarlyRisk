@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Roadmap — EarlyRisk</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-deep: #080b14;
+            --bg-card: rgba(255,255,255,0.03);
+            --border: rgba(255,255,255,0.07);
+            --border-bright: rgba(255,255,255,0.14);
+            --indigo: #6366f1;
+            --violet: #8b5cf6;
+            --emerald: #10b981;
+            --amber: #f59e0b;
+            --text-primary: #f1f5f9;
+            --text-muted: rgba(255,255,255,0.45);
+            --text-dim: rgba(255,255,255,0.25);
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-deep);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* BG */
+        .bg-wrap { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+        .orb { position: absolute; border-radius: 50%; filter: blur(90px); animation: orbFloat 22s ease-in-out infinite; }
+        .orb-1 { width: 650px; height: 650px; background: radial-gradient(circle, rgba(99,102,241,0.3) 0%, transparent 65%); top: -220px; left: -180px; }
+        .orb-2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(139,92,246,0.22) 0%, transparent 65%); bottom: -150px; right: -130px; animation-delay: -8s; }
+        .orb-3 { width: 350px; height: 350px; background: radial-gradient(circle, rgba(34,211,238,0.18) 0%, transparent 65%); top: 40%; left: 55%; animation-delay: -14s; }
+        @keyframes orbFloat {
+            0%,100% { transform: translate(0,0) scale(1); }
+            33% { transform: translate(50px,-50px) scale(1.06); }
+            66% { transform: translate(-35px,35px) scale(0.94); }
+        }
+        .grid-overlay {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background-image: linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+        }
+        .particles { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+        .particle { position: absolute; width: 3px; height: 3px; background: rgba(255,255,255,0.4); border-radius: 50%; animation: rise linear infinite; }
+        @keyframes rise { 0% { transform: translateY(100vh); opacity: 0; } 10% { opacity: 0.7; } 90% { opacity: 0.7; } 100% { transform: translateY(-100px); opacity: 0; } }
+
+        /* LAYOUT */
+        .wrap { position: relative; z-index: 10; max-width: 920px; margin: 0 auto; padding: 48px 24px 100px; }
+
+        /* NAV */
+        .topnav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 48px; }
+        .nav-home {
+            display: inline-flex; align-items: center; gap: 9px;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px; font-weight: 500;
+            transition: all 0.25s;
+        }
+        .nav-home:hover { background: rgba(255,255,255,0.08); color: white; }
+        .nav-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 9px 18px;
+            background: rgba(99,102,241,0.1);
+            border: 1px solid rgba(99,102,241,0.25);
+            border-radius: 100px;
+            color: #a5b4fc;
+            font-size: 12px; font-weight: 600;
+            letter-spacing: 0.5px; text-transform: uppercase;
+        }
+
+        /* PAGE HEADER */
+        .page-header { text-align: center; margin-bottom: 48px; animation: slideUp 0.7s cubic-bezier(0.4,0,0.2,1) both; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(36px, 5vw, 54px);
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            background: linear-gradient(135deg, #fff 0%, #c4b5fd 40%, #a5b4fc 70%, #67e8f9 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            margin-bottom: 10px;
+        }
+        .page-sub { color: var(--text-muted); font-size: 16px; }
+
+        /* CARD */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 44px;
+            backdrop-filter: blur(40px);
+            position: relative;
+            overflow: hidden;
+            animation: slideUp 0.7s 0.1s cubic-bezier(0.4,0,0.2,1) both;
+        }
+        .card::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+        }
+        .card-glow {
+            position: absolute; top: -80px; right: -80px;
+            width: 280px; height: 280px;
+            background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* SECTION LABEL */
+        .section { margin-bottom: 32px; }
+        .section-label {
+            display: flex; align-items: center; gap: 12px;
+            font-size: 11px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 2px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 20px;
+        }
+        .section-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(255,255,255,0.08), transparent); }
+        .section-icon { width: 28px; height: 28px; background: rgba(99,102,241,0.15); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #a5b4fc; }
+
+        /* FORM INPUTS */
+        .finput {
+            width: 100%;
+            padding: 15px 18px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            color: white;
+            font-size: 15px; font-family: inherit;
+            outline: none;
+            transition: all 0.25s;
+        }
+        .finput::placeholder { color: rgba(255,255,255,0.22); }
+        .finput:hover { border-color: rgba(255,255,255,0.16); background: rgba(255,255,255,0.06); }
+        .finput:focus { border-color: rgba(99,102,241,0.55); background: rgba(99,102,241,0.08); box-shadow: 0 0 0 4px rgba(99,102,241,0.12); }
+
+        select.finput {
+            cursor: pointer; appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='rgba(255,255,255,0.4)'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 14px center; background-size: 18px; padding-right: 44px;
+        }
+        select.finput option { background: #0d1220; color: white; }
+
+        .flabel { display: block; font-size: 13px; font-weight: 500; color: var(--text-muted); margin-bottom: 9px; }
+
+        /* BUTTON */
+        .btn-row { display: flex; gap: 14px; margin-top: 32px; flex-wrap: wrap; }
+        .btn {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 16px 32px; border: none; border-radius: 14px;
+            font-size: 15px; font-weight: 600; font-family: inherit;
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            text-decoration: none;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6 60%, #a855f7);
+            color: white; box-shadow: 0 8px 32px rgba(99,102,241,0.35);
+        }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 16px 48px rgba(99,102,241,0.5); }
+        .btn-ghost { background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--text-muted); }
+        .btn-ghost:hover { background: rgba(255,255,255,0.08); color: white; }
+
+        /* ===================== RESULTS ===================== */
+        .results-wrap { margin-top: 36px; animation: slideUp 0.6s cubic-bezier(0.4,0,0.2,1) both; }
+
+        /* ---- ROADMAP TIMELINE ---- */
+        .roadmap-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 44px;
+            backdrop-filter: blur(40px);
+            position: relative; overflow: hidden;
+            margin-bottom: 24px;
+        }
+        .roadmap-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+        }
+
+        .roadmap-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 20px; font-weight: 700;
+            margin-bottom: 36px;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        /* Timeline row */
+        .timeline-outer {
+            position: relative;
+            padding-bottom: 8px;
+            overflow-x: auto;
+        }
+        .timeline-track {
+            display: flex;
+            align-items: flex-start;
+            gap: 0;
+            position: relative;
+            min-width: max-content;
+            padding: 0 16px;
+        }
+
+        /* connector line between nodes */
+        .timeline-track::before {
+            content: '';
+            position: absolute;
+            top: 32px;
+            left: 56px;
+            right: 56px;
+            height: 3px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 2px;
+            z-index: 0;
+        }
+
+        .t-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex: 1;
+            min-width: 110px;
+            position: relative;
+            z-index: 1;
+            cursor: default;
+        }
+
+        /* progress line overlay */
+        .progress-line {
+            position: absolute;
+            top: 32px; left: 56px;
+            height: 3px;
+            background: linear-gradient(90deg, #10b981, #34d399);
+            border-radius: 2px;
+            z-index: 0;
+            box-shadow: 0 0 12px rgba(16,185,129,0.5);
+            transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        .t-node {
+            width: 64px; height: 64px;
+            border-radius: 18px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px;
+            margin-bottom: 14px;
+            position: relative;
+            transition: transform 0.3s;
+        }
+        .t-step:hover .t-node { transform: translateY(-4px); }
+
+        .node-completed {
+            background: linear-gradient(135deg, #10b981, #34d399);
+            box-shadow: 0 8px 28px rgba(16,185,129,0.4);
+        }
+        .node-current {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            box-shadow: 0 8px 28px rgba(245,158,11,0.45);
+            animation: pulse 2.2s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+
+        .node-locked {
+            background: rgba(255,255,255,0.07);
+            border: 2px solid rgba(255,255,255,0.12);
+        }
+
+        .t-name { font-size: 13px; font-weight: 600; color: white; margin-bottom: 3px; }
+        .t-time { font-size: 11px; color: var(--text-dim); }
+        .t-step.s-completed .t-name { color: #34d399; }
+        .t-step.s-current   .t-name { color: #fbbf24; }
+
+        /* ---- PROGRESS BAR ---- */
+        .progress-panel {
+            background: rgba(16,185,129,0.07);
+            border: 1px solid rgba(16,185,129,0.18);
+            border-radius: 20px;
+            padding: 26px 32px;
+            margin-bottom: 24px;
+        }
+        .prog-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+        .prog-label { font-size: 14px; color: rgba(255,255,255,0.75); font-weight: 500; }
+        .prog-meta { font-size: 13px; color: var(--text-muted); }
+        .prog-pct { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: #34d399; }
+        .prog-bar { height: 10px; background: rgba(255,255,255,0.07); border-radius: 6px; overflow: hidden; }
+        .prog-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #34d399, #6ee7b7);
+            border-radius: 6px;
+            position: relative;
+            transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+        }
+        .prog-fill::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2.5s infinite;
+        }
+        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+        /* Level badge */
+        .level-row { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
+        .level-badge {
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .level-beginner     { background: rgba(245,158,11,0.15); color: #fbbf24; }
+        .level-intermediate { background: rgba(99,102,241,0.15); color: #a5b4fc; }
+        .level-advanced     { background: rgba(16,185,129,0.15); color: #34d399; }
+        .skills-count { font-size: 13px; color: var(--text-muted); }
+
+        /* ---- NEXT SKILL CARD ---- */
+        .next-skill-card {
+            background: linear-gradient(135deg, rgba(245,158,11,0.08) 0%, rgba(251,191,36,0.04) 100%);
+            border: 1px solid rgba(245,158,11,0.2);
+            border-radius: 24px;
+            padding: 36px;
+            margin-bottom: 24px;
+        }
+        .next-header {
+            display: flex; align-items: center; gap: 16px;
+            margin-bottom: 28px;
+        }
+        .next-icon {
+            width: 58px; height: 58px;
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 26px;
+            box-shadow: 0 8px 24px rgba(245,158,11,0.3);
+        }
+        .next-info h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 22px; font-weight: 700; color: #fbbf24;
+            margin-bottom: 4px;
+        }
+        .next-info p { font-size: 14px; color: var(--text-muted); }
+
+        .next-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        @media (max-width: 600px) { .next-two-col { grid-template-columns: 1fr; } }
+
+        .next-section-title {
+            font-size: 11px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1.5px; color: rgba(255,255,255,0.45);
+            margin-bottom: 14px;
+        }
+
+        .project-item, .resource-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 13px 16px;
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(255,255,255,0.055);
+            border-radius: 12px;
+            margin-bottom: 9px;
+            transition: all 0.25s;
+        }
+        .project-item:hover, .resource-item:hover {
+            background: rgba(255,255,255,0.05);
+            transform: translateX(5px);
+        }
+        .item-icon {
+            width: 36px; height: 36px;
+            background: rgba(99,102,241,0.15);
+            border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            color: #a5b4fc; font-size: 13px; flex-shrink: 0;
+        }
+        .item-text { font-size: 13.5px; font-weight: 500; color: rgba(255,255,255,0.85); }
+
+        /* ---- TWO COLUMN INFO ---- */
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+        @media (max-width: 600px) { .info-grid { grid-template-columns: 1fr; } }
+
+        .info-block {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 28px;
+            backdrop-filter: blur(30px);
+        }
+        .info-block-title {
+            font-size: 11px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1.5px;
+            color: var(--text-dim); margin-bottom: 16px;
+        }
+
+        /* Missing skills grid */
+        .skills-chips { display: flex; flex-wrap: wrap; gap: 9px; }
+        .skill-chip {
+            padding: 8px 15px;
+            background: rgba(99,102,241,0.12);
+            border: 1px solid rgba(99,102,241,0.25);
+            border-radius: 10px;
+            font-size: 13px; font-weight: 500;
+            color: #c4b5fd;
+            transition: all 0.2s;
+        }
+        .skill-chip:hover { background: rgba(99,102,241,0.22); }
+
+        /* Roles/Resources lists */
+        .list-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 14px; color: rgba(255,255,255,0.8);
+        }
+        .list-item:last-child { border-bottom: none; }
+        .list-dot { width: 6px; height: 6px; border-radius: 50%; background: #6366f1; flex-shrink: 0; }
+
+        /* Meta row */
+        .meta-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+        .meta-pill {
+            display: flex; align-items: center; gap: 8px;
+            padding: 10px 18px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 13px; font-weight: 500;
+        }
+        .meta-pill i { color: #a5b4fc; }
+        .meta-pill span { color: white; }
+        .meta-pill em { color: var(--text-muted); margin-right: 4px; font-style: normal; }
+
+        @media (max-width: 600px) {
+            .roadmap-card, .card { padding: 28px 20px; }
+            .next-skill-card { padding: 24px 20px; }
+            .topnav { flex-direction: column; gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-wrap">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+</div>
+<div class="grid-overlay"></div>
+<div class="particles" id="particles"></div>
+
+<div class="wrap">
+
+    <!-- Nav -->
+    <nav class="topnav">
+        <a href="/" class="nav-home"><i class="fas fa-arrow-left"></i> Back to Home</a>
+        <div class="nav-badge"><i class="fas fa-rocket"></i> Career Guidance Module</div>
+    </nav>
+
+    <!-- Header -->
+    <div class="page-header">
+        <h1 class="page-title">🚀 Career Roadmap</h1>
+        <p class="page-sub">Generate your personalized learning path</p>
+    </div>
+
+    <!-- ===== FORM ===== -->
+    <div class="card">
+        <div class="card-glow"></div>
+        <form method="POST">
+
+            <div class="section">
+                <div class="section-label">
+                    <div class="section-icon"><i class="fas fa-bullseye"></i></div>
+                    Career Goal
+                </div>
+                <label class="flabel">Select Your Target Role</label>
+                <select class="finput" name="interest">
+                    <option value="">-- Select a career path --</option>
+                    <option value="AI/ML Engineer"     {% if career and career.career == 'AI/ML Engineer'     %}selected{% endif %}>🤖 AI/ML Engineer</option>
+                    <option value="Data Analyst"       {% if career and career.career == 'Data Analyst'       %}selected{% endif %}>📊 Data Analyst</option>
+                    <option value="Power BI Expert"    {% if career and career.career == 'Power BI Expert'    %}selected{% endif %}>📈 Power BI Expert</option>
+                    <option value="Frontend Developer" {% if career and career.career == 'Frontend Developer' %}selected{% endif %}>🎨 Frontend Developer</option>
+                    <option value="Backend Developer"  {% if career and career.career == 'Backend Developer'  %}selected{% endif %}>⚙️ Backend Developer</option>
+                    <option value="Cloud Engineer"     {% if career and career.career == 'Cloud Engineer'     %}selected{% endif %}>☁️ Cloud Engineer</option>
+                    <option value="DevOps Engineer"    {% if career and career.career == 'DevOps Engineer'    %}selected{% endif %}>🔧 DevOps Engineer</option>
+                    <option value="Cybersecurity Analyst" {% if career and career.career == 'Cybersecurity Analyst' %}selected{% endif %}>🔐 Cybersecurity Analyst</option>
+                    <option value="Product Manager"    {% if career and career.career == 'Product Manager'    %}selected{% endif %}>🧩 Product Manager</option>
+                </select>
+            </div>
+
+            <div class="section">
+                <div class="section-label">
+                    <div class="section-icon"><i class="fas fa-code"></i></div>
+                    Current Skills
+                </div>
+                <label class="flabel">Your existing skills (comma separated)</label>
+                <input class="finput" type="text" name="skills" placeholder="e.g. Python, SQL, HTML">
+            </div>
+
+            <div class="btn-row">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-map-marked-alt"></i>
+                    Generate Roadmap
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- ===== RESULTS ===== -->
+    {% if career %}
+    <div class="results-wrap">
+
+        <!-- Meta info row -->
+        <div class="meta-row">
+            <div class="meta-pill"><i class="fas fa-clock"></i><em>Time:</em><span>{{ career.time }}</span></div>
+            <div class="meta-pill"><i class="fas fa-fire"></i><em>Demand:</em><span>{{ career.demand }}</span></div>
+            <div class="meta-pill"><i class="fas fa-rupee-sign"></i><em>Salary:</em><span>{{ career.salary }}</span></div>
+        </div>
+
+        <!-- ROADMAP TIMELINE -->
+        <div class="roadmap-card">
+            <div class="roadmap-title"><span>🗺️</span> {{ career.career }} Roadmap</div>
+
+            <div class="timeline-outer">
+                <div class="timeline-track" id="timelineTrack">
+                    <!-- Progress line (width set via JS) -->
+                    <div class="progress-line" id="progressLine"></div>
+
+                    {% for item in career.roadmap %}
+                    <div class="t-step {% if item.completed %}s-completed{% elif item.skill == career.next_skill %}s-current{% else %}s-locked{% endif %}">
+                        <div class="t-node {% if item.completed %}node-completed{% elif item.skill == career.next_skill %}node-current{% else %}node-locked{% endif %}">
+                            {% if item.completed %}✔{% elif item.skill == career.next_skill %}🎯{% else %}🔒{% endif %}
+                        </div>
+                        <div class="t-name">{{ item.skill }}</div>
+                        <div class="t-time">{{ item.time }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- PROGRESS PANEL -->
+        <div class="progress-panel">
+            <div class="prog-header">
+                <span class="prog-label">Overall Skill Progress</span>
+                <span class="prog-pct">{{ career.progress }}%</span>
+            </div>
+            <div class="prog-bar">
+                <div class="prog-fill" id="progFill" style="width: 0%" data-width="{{ career.progress }}%"></div>
+            </div>
+            <div class="level-row">
+                <div class="level-badge
+                    {% if career.progress_label == 'Beginner' %}level-beginner
+                    {% elif career.progress_label == 'Intermediate' %}level-intermediate
+                    {% else %}level-advanced{% endif %}">
+                    {{ career.progress_label }}
+                </div>
+                <span class="skills-count">{{ career.completed_count }} / {{ career.total_skills }} skills completed</span>
+            </div>
+        </div>
+
+        <!-- NEXT SKILL -->
+        {% if career.next_skill %}
+        <div class="next-skill-card">
+            <div class="next-header">
+                <div class="next-icon">🎯</div>
+                <div class="next-info">
+                    <h3>{{ career.next_skill }}</h3>
+                    <p>Next recommended skill · Estimated: {{ career.next_time }}</p>
+                </div>
+            </div>
+
+            <div class="next-two-col">
+                <div>
+                    <div class="next-section-title">💡 Suggested Projects</div>
+                    {% for p in career.next_projects %}
+                    <div class="project-item">
+                        <div class="item-icon"><i class="fas fa-code-branch"></i></div>
+                        <span class="item-text">{{ p }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div>
+                    <div class="next-section-title">📚 Learning Resources</div>
+                    {% for r in career.next_resources %}
+                    <div class="resource-item">
+                        <div class="item-icon"><i class="fas fa-book-open"></i></div>
+                        <span class="item-text">{{ r }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- INFO GRID: Missing Skills + Roles -->
+        <div class="info-grid">
+            <div class="info-block">
+                <div class="info-block-title">⚠️ Missing Skills</div>
+                <div class="skills-chips">
+                    {% for skill in career.missing_skills %}
+                    <div class="skill-chip">{{ skill }}</div>
+                    {% endfor %}
+                    {% if not career.missing_skills %}
+                    <span style="color: #34d399; font-size: 14px; font-weight: 500;">🎉 All skills completed!</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="info-block">
+                <div class="info-block-title">💼 Possible Job Roles</div>
+                {% for role in career.roles %}
+                <div class="list-item">
+                    <div class="list-dot"></div>
+                    {{ role }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Resources block -->
+        <div class="info-block" style="margin-bottom: 24px;">
+            <div class="info-block-title">🔗 General Learning Resources</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px;">
+                {% for resource in career.resources %}
+                <div class="skill-chip" style="background: rgba(34,211,238,0.1); border-color: rgba(34,211,238,0.25); color: #67e8f9;">
+                    <i class="fas fa-link" style="margin-right: 5px; font-size: 11px;"></i>{{ resource }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="btn-row" style="justify-content: center;">
+            <a href="/career" class="btn btn-ghost">
+                <i class="fas fa-redo"></i> New Roadmap
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<script>
+    // Particles
+    (function() {
+        const c = document.getElementById('particles');
+        for (let i = 0; i < 55; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.animationDelay = Math.random() * 14 + 's';
+            p.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            c.appendChild(p);
+        }
+    })();
+
+    // Progress bar animate
+    window.addEventListener('load', function() {
+        const fill = document.getElementById('progFill');
+        if (fill) {
+            const w = fill.dataset.width;
+            setTimeout(() => { fill.style.width = w; }, 300);
+        }
+
+        // Progress line on timeline
+        const track = document.getElementById('timelineTrack');
+        const line  = document.getElementById('progressLine');
+        if (!track || !line) return;
+
+        const steps      = track.querySelectorAll('.t-step');
+        const totalSteps = steps.length;
+        let completedIdx = -1;
+
+        steps.forEach((s, i) => {
+            if (s.classList.contains('s-completed') || s.classList.contains('s-current')) {
+                completedIdx = i;
+            }
+        });
+
+        if (completedIdx >= 0 && totalSteps > 1) {
+            const pct = (completedIdx / (totalSteps - 1)) * 100;
+            setTimeout(() => {
+                const trackW = track.offsetWidth - 112;
+                line.style.width = (pct / 100) * trackW + 'px';
+            }, 400);
+        }
+    });
+</script>
+</body>
+</html>

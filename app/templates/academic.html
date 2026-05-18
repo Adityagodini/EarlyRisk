@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Risk Detection — EarlyRisk</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-deep: #080b14;
+            --bg-card: rgba(255,255,255,0.03);
+            --border: rgba(255,255,255,0.07);
+            --border-bright: rgba(255,255,255,0.14);
+            --indigo: #6366f1;
+            --violet: #8b5cf6;
+            --emerald: #10b981;
+            --amber: #f59e0b;
+            --red: #ef4444;
+            --text-primary: #f1f5f9;
+            --text-muted: rgba(255,255,255,0.45);
+            --text-dim: rgba(255,255,255,0.25);
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-deep);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* BG */
+        .bg-wrap { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+        .orb { position: absolute; border-radius: 50%; filter: blur(90px); animation: orbFloat 22s ease-in-out infinite; }
+        .orb-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(239,68,68,0.25) 0%, transparent 65%); top: -200px; left: -200px; }
+        .orb-2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(99,102,241,0.2) 0%, transparent 65%); bottom: -150px; right: -150px; animation-delay: -8s; }
+        .orb-3 { width: 350px; height: 350px; background: radial-gradient(circle, rgba(139,92,246,0.18) 0%, transparent 65%); top: 50%; left: 60%; animation-delay: -14s; }
+        @keyframes orbFloat {
+            0%,100% { transform: translate(0,0) scale(1); }
+            33% { transform: translate(40px,-50px) scale(1.06); }
+            66% { transform: translate(-30px,30px) scale(0.95); }
+        }
+        .grid-overlay {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background-image: linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+        }
+        .particles { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+        .particle { position: absolute; width: 3px; height: 3px; background: rgba(255,255,255,0.4); border-radius: 50%; animation: rise linear infinite; }
+        @keyframes rise { 0% { transform: translateY(100vh); opacity: 0; } 10% { opacity: 0.7; } 90% { opacity: 0.7; } 100% { transform: translateY(-100px); opacity: 0; } }
+
+        /* LAYOUT */
+        .wrap { position: relative; z-index: 10; max-width: 860px; margin: 0 auto; padding: 48px 24px 80px; }
+
+        /* NAV */
+        .topnav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 48px;
+        }
+        .nav-home {
+            display: inline-flex; align-items: center; gap: 9px;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.25s;
+        }
+        .nav-home:hover { background: rgba(255,255,255,0.08); color: white; }
+        .nav-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 9px 18px;
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.25);
+            border-radius: 100px;
+            color: #fca5a5;
+            font-size: 12px; font-weight: 600;
+            letter-spacing: 0.5px; text-transform: uppercase;
+        }
+
+        /* PAGE HEADER */
+        .page-header { text-align: center; margin-bottom: 48px; animation: slideUp 0.7s cubic-bezier(0.4,0,0.2,1) both; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(36px, 5vw, 54px);
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            background: linear-gradient(135deg, #fff 0%, #fca5a5 50%, #f87171 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            margin-bottom: 10px;
+        }
+        .page-sub { color: var(--text-muted); font-size: 16px; }
+
+        /* FORM CARD */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 44px;
+            backdrop-filter: blur(40px);
+            position: relative;
+            overflow: hidden;
+            animation: slideUp 0.7s 0.1s cubic-bezier(0.4,0,0.2,1) both;
+        }
+        .card::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+        }
+        .card-glow {
+            position: absolute; top: -80px; right: -80px;
+            width: 280px; height: 280px;
+            background: radial-gradient(circle, rgba(239,68,68,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* SECTION */
+        .section { margin-bottom: 36px; }
+        .section-label {
+            display: flex; align-items: center; gap: 12px;
+            font-size: 11px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 2px;
+            color: rgba(255,255,255,0.55);
+            margin-bottom: 22px;
+        }
+        .section-label::after {
+            content: ''; flex: 1; height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.08), transparent);
+        }
+        .section-icon {
+            width: 28px; height: 28px;
+            background: rgba(239,68,68,0.15);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; color: #fca5a5;
+        }
+
+        /* FORM GRID */
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
+
+        .fgroup { display: flex; flex-direction: column; gap: 9px; }
+        .flabel {
+            font-size: 13px; font-weight: 500; color: var(--text-muted);
+            transition: color 0.25s;
+        }
+        .fgroup:focus-within .flabel { color: #fca5a5; }
+
+        .finput {
+            padding: 15px 18px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            color: white;
+            font-size: 15px; font-family: inherit;
+            outline: none;
+            transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+        }
+        .finput::placeholder { color: rgba(255,255,255,0.22); }
+        .finput:hover { border-color: rgba(255,255,255,0.16); background: rgba(255,255,255,0.06); }
+        .finput:focus { border-color: rgba(239,68,68,0.5); background: rgba(239,68,68,0.07); box-shadow: 0 0 0 4px rgba(239,68,68,0.1); }
+
+        select.finput {
+            cursor: pointer; appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='rgba(255,255,255,0.4)'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 18px;
+            padding-right: 44px;
+        }
+        select.finput option { background: #0d1220; color: white; }
+
+        /* BUTTONS */
+        .btn-row { display: flex; gap: 14px; margin-top: 36px; flex-wrap: wrap; }
+
+        .btn {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 16px 32px;
+            border: none; border-radius: 14px;
+            font-size: 15px; font-weight: 600; font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            position: relative; overflow: hidden;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #ef4444, #f87171 60%, #fca5a5);
+            color: white;
+            box-shadow: 0 8px 32px rgba(239,68,68,0.35);
+        }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 16px 48px rgba(239,68,68,0.5); }
+        .btn-primary:active { transform: translateY(-1px); }
+
+        .btn-ghost {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+        }
+        .btn-ghost:hover { background: rgba(255,255,255,0.08); color: white; }
+
+        /* ===== RESULT CARD ===== */
+        .result-card {
+            margin-top: 36px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 52px 44px;
+            backdrop-filter: blur(40px);
+            position: relative;
+            overflow: hidden;
+            animation: slideUp 0.6s cubic-bezier(0.4,0,0.2,1) both;
+            text-align: center;
+        }
+
+        /* Gauge */
+        .gauge-wrap {
+            position: relative;
+            width: 220px; height: 220px;
+            margin: 0 auto 32px;
+        }
+        .gauge-wrap svg { transform: rotate(-90deg); }
+        .gauge-bg { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 16; }
+        .gauge-fill {
+            fill: none; stroke-width: 16; stroke-linecap: round;
+            transition: stroke-dashoffset 1.4s cubic-bezier(0.4,0,0.2,1), stroke 0.5s;
+        }
+        .gauge-center {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%,-50%);
+            text-align: center;
+        }
+        .gauge-pct {
+            font-family: 'Syne', sans-serif;
+            font-size: 46px; font-weight: 800; line-height: 1;
+            color: white;
+        }
+        .gauge-lbl { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+        /* Status pill */
+        .status-pill {
+            display: inline-flex; align-items: center; gap: 9px;
+            padding: 11px 24px; border-radius: 100px;
+            font-size: 16px; font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .pill-risk    { background: rgba(239,68,68,0.15);  color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+        .pill-safe    { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+
+        .confidence-txt { color: var(--text-muted); font-size: 14px; margin-bottom: 40px; }
+
+        /* Reasons */
+        .reasons-section { text-align: left; }
+        .reasons-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 17px; font-weight: 700;
+            margin-bottom: 18px; color: white;
+        }
+
+        .reason-item {
+            display: flex; align-items: center; gap: 14px;
+            padding: 16px 20px;
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px;
+            margin-bottom: 10px;
+            transition: all 0.25s;
+        }
+        .reason-item:hover { background: rgba(255,255,255,0.045); transform: translateX(6px); }
+
+        .reason-dot {
+            width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+            background: #f87171;
+            box-shadow: 0 0 10px rgba(248,113,113,0.5);
+        }
+        .reason-dot.safe { background: #34d399; box-shadow: 0 0 10px rgba(52,211,153,0.5); }
+        .reason-text { color: rgba(255,255,255,0.85); font-size: 14px; font-weight: 500; }
+
+        .all-good {
+            display: flex; align-items: center; gap: 14px;
+            padding: 20px;
+            background: rgba(16,185,129,0.08);
+            border: 1px solid rgba(16,185,129,0.2);
+            border-radius: 14px;
+            color: #34d399;
+            font-size: 15px; font-weight: 600;
+        }
+
+        .back-row { margin-top: 36px; display: flex; justify-content: center; }
+
+        @media (max-width: 600px) {
+            .card, .result-card { padding: 28px 22px; }
+            .topnav { flex-direction: column; gap: 12px; }
+            .btn-row { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-wrap">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+</div>
+<div class="grid-overlay"></div>
+<div class="particles" id="particles"></div>
+
+<div class="wrap">
+
+    <!-- Nav -->
+    <nav class="topnav">
+        <a href="/" class="nav-home"><i class="fas fa-arrow-left"></i> Back to Home</a>
+        <div class="nav-badge"><i class="fas fa-brain"></i> Academic Risk Module</div>
+    </nav>
+
+    <!-- Header -->
+    <div class="page-header">
+        <h1 class="page-title">🧠 Academic Risk Detection</h1>
+        <p class="page-sub">Enter your academic data to detect early risk signals</p>
+    </div>
+
+    <!-- Form Card -->
+    {% if not prediction %}
+    <div class="card">
+        <div class="card-glow"></div>
+
+        <form method="POST">
+
+            <!-- Academic Performance -->
+            <div class="section">
+                <div class="section-label">
+                    <div class="section-icon"><i class="fas fa-chart-bar"></i></div>
+                    Academic Performance
+                </div>
+                <div class="form-grid">
+                    <div class="fgroup">
+                        <label class="flabel">Attendance (%)</label>
+                        <input class="finput" type="number" name="attendance" placeholder="e.g. 85" min="0" max="100" required>
+                    </div>
+                    <div class="fgroup">
+                        <label class="flabel">Internal Marks (%)</label>
+                        <input class="finput" type="number" name="internal_marks" placeholder="e.g. 72" min="0" max="100" required>
+                    </div>
+                    <div class="fgroup">
+                        <label class="flabel">Mid Exam Marks (%)</label>
+                        <input class="finput" type="number" name="mid_marks" placeholder="e.g. 68" min="0" max="100" required>
+                    </div>
+                    <div class="fgroup">
+                        <label class="flabel">Assignment Average (%)</label>
+                        <input class="finput" type="number" name="assignment_marks" placeholder="e.g. 78" min="0" max="100" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Study Habits -->
+            <div class="section">
+                <div class="section-label">
+                    <div class="section-icon"><i class="fas fa-clock"></i></div>
+                    Study Habits
+                </div>
+                <div class="form-grid">
+                    <div class="fgroup">
+                        <label class="flabel">Daily Study Hours</label>
+                        <input class="finput" type="number" name="study_hours" placeholder="e.g. 4" min="0" max="24" required>
+                    </div>
+                    <div class="fgroup">
+                        <label class="flabel">Social Media Hours / Day</label>
+                        <input class="finput" type="number" name="social_media" placeholder="e.g. 2" min="0" max="24" required>
+                    </div>
+                    <div class="fgroup">
+                        <label class="flabel">Credits Completed</label>
+                        <input class="finput" type="number" name="credits" placeholder="e.g. 45" min="0" required>
+                    </div>
+                    <div class="fgroup">
+                        <label class="flabel">Participation Score (1–10)</label>
+                        <input class="finput" type="number" name="participation" placeholder="e.g. 7" min="1" max="10" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Academic Status -->
+            <div class="section">
+                <div class="section-label">
+                    <div class="section-icon"><i class="fas fa-flag"></i></div>
+                    Academic Status
+                </div>
+                <div class="form-grid">
+                    <div class="fgroup">
+                        <label class="flabel">Number of Backlogs</label>
+                        <input class="finput" type="number" name="backlogs" placeholder="e.g. 0" min="0" required>
+                    </div>
+                    <div class="fgroup">
+                        <label class="flabel">Late Submissions</label>
+                        <input class="finput" type="number" name="late_submissions" placeholder="e.g. 2" min="0" required>
+                    </div>
+                    <div class="fgroup">
+                        <label class="flabel">Ever on Probation?</label>
+                        <select class="finput" name="probation">
+                            <option value="No">No</option>
+                            <option value="Yes">Yes</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-chart-line"></i>
+                    Analyze Risk
+                </button>
+                <button type="reset" class="btn btn-ghost">
+                    <i class="fas fa-redo"></i>
+                    Reset
+                </button>
+            </div>
+
+        </form>
+    </div>
+    {% endif %}
+
+    <!-- ===== RESULTS ===== -->
+    {% if prediction %}
+    <div class="result-card">
+        <div class="card-glow"></div>
+
+        <!-- Gauge -->
+        <div class="gauge-wrap">
+            <svg width="220" height="220" viewBox="0 0 220 220">
+                <defs>
+                    <linearGradient id="gRisk" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#ef4444"/>
+                        <stop offset="100%" stop-color="#f87171"/>
+                    </linearGradient>
+                    <linearGradient id="gSafe" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#10b981"/>
+                        <stop offset="100%" stop-color="#34d399"/>
+                    </linearGradient>
+                </defs>
+                <circle class="gauge-bg" cx="110" cy="110" r="94"/>
+                <circle class="gauge-fill" id="gaugeFill" cx="110" cy="110" r="94"
+                    stroke="{% if prediction == 'At Risk' %}url(#gRisk){% else %}url(#gSafe){% endif %}"
+                    stroke-dasharray="590.6"
+                    stroke-dashoffset="590.6"
+                    data-pct="{{ confidence }}"/>
+            </svg>
+            <div class="gauge-center">
+                <div class="gauge-pct" id="gaugePct">0%</div>
+                <div class="gauge-lbl">Confidence</div>
+            </div>
+        </div>
+
+        <!-- Status -->
+        <div class="status-pill {% if prediction == 'At Risk' %}pill-risk{% else %}pill-safe{% endif %}">
+            <i class="fas {% if prediction == 'At Risk' %}fa-exclamation-triangle{% else %}fa-check-circle{% endif %}"></i>
+            {{ prediction }}
+        </div>
+
+        <p class="confidence-txt">Model confidence: <strong style="color:white">{{ confidence }}%</strong></p>
+
+        <!-- Risk Reasons -->
+        <div class="reasons-section">
+            {% if reasons %}
+            <h3 class="reasons-title">⚠️ Risk Indicators Detected</h3>
+            {% for reason in reasons %}
+            <div class="reason-item">
+                <div class="reason-dot {% if prediction != 'At Risk' %}safe{% endif %}"></div>
+                <span class="reason-text">{{ reason }}</span>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="all-good">
+                <i class="fas fa-star fa-lg"></i>
+                No risk indicators found — keep up the great work!
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="back-row">
+            <a href="/academic" class="btn btn-ghost">
+                <i class="fas fa-arrow-left"></i>
+                Analyze Again
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<script>
+    // Particles
+    (function() {
+        const c = document.getElementById('particles');
+        for (let i = 0; i < 50; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.animationDelay = Math.random() * 14 + 's';
+            p.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            c.appendChild(p);
+        }
+    })();
+
+    // Gauge animation
+    window.addEventListener('load', function() {
+        const fill = document.getElementById('gaugeFill');
+        const pctEl = document.getElementById('gaugePct');
+        if (!fill) return;
+
+        const pct = parseFloat(fill.dataset.pct) || 0;
+        const circumference = 590.6;
+        const offset = circumference - (pct / 100) * circumference;
+
+        setTimeout(() => {
+            fill.style.strokeDashoffset = offset;
+        }, 200);
+
+        // Count-up animation
+        let current = 0;
+        const step = pct / 80;
+        const interval = setInterval(() => {
+            current = Math.min(current + step, pct);
+            pctEl.textContent = Math.round(current) + '%';
+            if (current >= pct) clearInterval(interval);
+        }, 18);
+    });
+</script>
+</body>
+</html>

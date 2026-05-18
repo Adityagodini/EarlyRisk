@@ -1,0 +1,87 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+    <title>EarlyRisk - Academic Weakness Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🎓 EarlyRisk System</h1>
+    <p style="text-align:center;">Early Detection of Academically Weak Students</p>
+
+    <form method="POST">
+
+        <label>Average Attendance (%)</label>
+        <input type="number" name="attendance" required>
+
+        <label>Daily Study Hours</label>
+        <input type="number" name="study_hours" required>
+
+        <label>Daily Social Media Hours</label>
+        <input type="number" name="social_media" required>
+
+        <label>Credits Completed</label>
+        <input type="number" name="credits" required>
+
+        <label>Assignment Average (%)</label>
+        <input type="number" name="assignment_marks" required>
+
+        <label>Internal Marks (%)</label>
+        <input type="number" name="internal_marks" required>
+
+        <label>Mid Exam Marks (%)</label>
+        <input type="number" name="mid_marks" required>
+
+        <label>Number of Backlogs</label>
+        <input type="number" name="backlogs" required>
+
+        <label>Late Assignment Submissions</label>
+        <input type="number" name="late_submissions" required>
+
+        <label>Class Participation (1-10)</label>
+        <input type="number" name="participation" min="1" max="10" required>
+
+
+        <label>Did you ever fall in probation?</label>
+        <select name="probation">
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+        </select>
+
+        <button type="submit">Predict Academic Risk</button>
+
+    </form>
+
+    {% if prediction %}
+    <div class="result {% if prediction == 'At Risk' %}risk{% else %}safe{% endif %}">
+        <h2>Prediction: {{ prediction }}</h2>
+        <h3>Confidence: {{ confidence }}%</h3>
+    </div>
+    {% endif %}
+
+    {% if top_features %}
+    <div class="section-title">📊 Top Influencing Factors (Global Model Insight)</div>
+    <ul>
+        {% for feature in top_features %}
+            <li>{{ feature.Feature }} (Importance: {{ "%.3f"|format(feature.Importance) }})</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if reasons %}
+    <div class="section-title">⚠ Personalized Risk Indicators</div>
+    <ul>
+        {% for reason in reasons %}
+            <li>{{ reason }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+</div>
+
+</body>
+</html> -->

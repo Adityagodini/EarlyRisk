@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EarlyRisk System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-deep: #080b14;
+            --bg-mid: #0d1220;
+            --bg-card: rgba(255,255,255,0.03);
+            --border: rgba(255,255,255,0.07);
+            --border-bright: rgba(255,255,255,0.14);
+            --indigo: #6366f1;
+            --violet: #8b5cf6;
+            --pink: #ec4899;
+            --cyan: #22d3ee;
+            --emerald: #10b981;
+            --amber: #f59e0b;
+            --red: #ef4444;
+            --text-primary: #f1f5f9;
+            --text-muted: rgba(255,255,255,0.45);
+            --text-dim: rgba(255,255,255,0.25);
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-deep);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: var(--text-primary);
+        }
+
+        /* ===== ANIMATED BACKGROUND ===== */
+        .bg-wrap {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            animation: orbFloat 22s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 700px; height: 700px;
+            background: radial-gradient(circle, rgba(99,102,241,0.35) 0%, transparent 65%);
+            top: -250px; left: -200px;
+            animation-delay: 0s;
+        }
+        .orb-2 {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(236,72,153,0.25) 0%, transparent 65%);
+            bottom: -150px; right: -150px;
+            animation-delay: -8s;
+        }
+        .orb-3 {
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(34,211,238,0.2) 0%, transparent 65%);
+            top: 50%; left: 50%;
+            transform: translate(-50%,-50%);
+            animation-delay: -14s;
+        }
+
+        @keyframes orbFloat {
+            0%,100% { transform: translate(0,0) scale(1); }
+            25%  { transform: translate(60px,-60px) scale(1.08); }
+            50%  { transform: translate(-40px,40px) scale(0.93); }
+            75%  { transform: translate(50px,50px) scale(1.04); }
+        }
+
+        /* Grid overlay */
+        .grid-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+        }
+
+        /* Floating particles */
+        .particles { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+        .particle {
+            position: absolute;
+            width: 3px; height: 3px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 50%;
+            animation: rise linear infinite;
+        }
+
+        @keyframes rise {
+            0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+            10%  { opacity: 0.8; }
+            90%  { opacity: 0.8; }
+            100% { transform: translateY(-100px) scale(1); opacity: 0; }
+        }
+
+        /* ===== LAYOUT ===== */
+        .page {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 24px;
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            text-align: center;
+            margin-bottom: 70px;
+            animation: slideUp 0.8s cubic-bezier(0.4,0,0.2,1) both;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 20px;
+            background: rgba(99,102,241,0.12);
+            border: 1px solid rgba(99,102,241,0.35);
+            border-radius: 100px;
+            color: #a5b4fc;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 28px;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: #6366f1;
+            box-shadow: 0 0 8px #6366f1;
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%,100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .hero-title {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(52px, 7vw, 84px);
+            font-weight: 800;
+            line-height: 1.05;
+            letter-spacing: -2.5px;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #fff 0%, #c4b5fd 40%, #a5b4fc 70%, #67e8f9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-sub {
+            font-size: 18px;
+            color: var(--text-muted);
+            max-width: 520px;
+            margin: 0 auto;
+            line-height: 1.7;
+            font-weight: 400;
+        }
+
+        /* ===== MODULE CARDS ===== */
+        .modules {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 28px;
+            max-width: 860px;
+            width: 100%;
+            animation: slideUp 0.8s 0.2s cubic-bezier(0.4,0,0.2,1) both;
+        }
+
+        .module-card {
+            position: relative;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 44px 40px;
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+            overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.4,0,0.2,1),
+                        border-color 0.3s,
+                        box-shadow 0.4s;
+            backdrop-filter: blur(30px);
+            display: block;
+        }
+
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+        }
+
+        .module-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 28px;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .card-risk::after {
+            background: radial-gradient(circle at top right, rgba(239,68,68,0.08) 0%, transparent 60%);
+        }
+        .card-career::after {
+            background: radial-gradient(circle at top right, rgba(99,102,241,0.1) 0%, transparent 60%);
+        }
+
+        .module-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--border-bright);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.4);
+        }
+        .module-card:hover::after { opacity: 1; }
+
+        .module-card:hover .card-arrow {
+            background: rgba(255,255,255,0.12);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .card-arrow {
+            position: absolute;
+            top: 40px; right: 40px;
+            width: 42px; height: 42px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            color: rgba(255,255,255,0.35);
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .module-icon {
+            width: 76px; height: 76px;
+            border-radius: 22px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 34px;
+            margin-bottom: 28px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .icon-risk {
+            background: linear-gradient(135deg, #ef4444, #f87171);
+            box-shadow: 0 12px 40px rgba(239,68,68,0.35);
+        }
+        .icon-career {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            box-shadow: 0 12px 40px rgba(99,102,241,0.35);
+        }
+
+        .module-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .module-desc {
+            color: var(--text-muted);
+            font-size: 14.5px;
+            line-height: 1.65;
+            margin-bottom: 28px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .module-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .module-tag {
+            padding: 7px 14px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* footer hint */
+        .footer-hint {
+            margin-top: 60px;
+            color: var(--text-dim);
+            font-size: 13px;
+            animation: slideUp 0.8s 0.4s cubic-bezier(0.4,0,0.2,1) both;
+        }
+
+        @media (max-width: 600px) {
+            .modules { grid-template-columns: 1fr; }
+            .module-card { padding: 32px 28px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Background -->
+<div class="bg-wrap">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+</div>
+<div class="grid-overlay"></div>
+<div class="particles" id="particles"></div>
+
+<!-- Page -->
+<div class="page">
+    <div class="hero">
+        <div class="badge">
+            <div class="badge-dot"></div>
+            AI-Powered Education Intelligence
+        </div>
+        <h1 class="hero-title">🎓 EarlyRisk<br>System</h1>
+        <p class="hero-sub">Intelligent academic risk detection and personalized career roadmaps — built for student success.</p>
+    </div>
+
+    <div class="modules">
+        <a href="/academic" class="module-card card-risk">
+            <div class="card-arrow"><i class="fas fa-arrow-right"></i></div>
+            <div class="module-icon icon-risk">🧠</div>
+            <h2 class="module-title">Academic Risk Analysis</h2>
+            <p class="module-desc">Predict academic performance risks early using an ML model trained on student behavior patterns. Get real-time alerts and personalized recommendations.</p>
+            <div class="module-tags">
+                <span class="module-tag">ML Prediction</span>
+                <span class="module-tag">Early Warning</span>
+                <span class="module-tag">Smart Insights</span>
+            </div>
+        </a>
+
+        <a href="/career" class="module-card card-career">
+            <div class="card-arrow"><i class="fas fa-arrow-right"></i></div>
+            <div class="module-icon icon-career">🚀</div>
+            <h2 class="module-title">Career Roadmap Guidance</h2>
+            <p class="module-desc">Get personalized learning paths based on your target role and current skills. Track progress, discover resources, and unlock your next skill.</p>
+            <div class="module-tags">
+                <span class="module-tag">Custom Paths</span>
+                <span class="module-tag">Skill Tracking</span>
+                <span class="module-tag">Resources</span>
+            </div>
+        </a>
+    </div>
+
+    <p class="footer-hint">Select a module above to get started</p>
+</div>
+
+<script>
+    (function() {
+        const container = document.getElementById('particles');
+        for (let i = 0; i < 55; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.animationDelay = Math.random() * 12 + 's';
+            p.style.animationDuration = (Math.random() * 12 + 10) + 's';
+            p.style.opacity = Math.random() * 0.6 + 0.2;
+            container.appendChild(p);
+        }
+    })();
+</script>
+</body>
+</html>
