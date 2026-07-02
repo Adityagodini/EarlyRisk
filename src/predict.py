@@ -110,8 +110,15 @@
 import pandas as pd
 import joblib
 
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, ".."))
+
+MODEL_PATH = os.path.join(PROJECT_ROOT, "model", "earlyrisk_model.pkl")
+
 MODEL_PATH = "../model/earlyrisk_model.pkl"
-FEATURES_PATH = "../model/feature_columns.pkl"
+FEATURES_PATH = os.path.join(PROJECT_ROOT, "model", "feature_columns.pkl")
 
 
 def load_model():

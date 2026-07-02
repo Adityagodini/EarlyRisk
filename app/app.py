@@ -8,10 +8,19 @@ import joblib
 from src.predict import predict_academic_risk
 from src.career_engine import generate_career_roadmap
 
+
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, ".."))
+MODEL_DIR = os.path.join(PROJECT_ROOT, "model")
+
+
+
 app = Flask(__name__)
 
 # Load feature importance
-feature_importance = joblib.load("../model/feature_importance.pkl")
+feature_importance = joblib.load(
+    os.path.join(MODEL_DIR, "feature_importance.pkl"))
 top_features = feature_importance.head(5)
 
 
